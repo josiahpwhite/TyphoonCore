@@ -825,11 +825,20 @@ func (packet *PacketUpdateHealth) Write(player *Player) (err error) {
 		log.Print(err)
 		return
 	}
-	err = player.WriteVarInt(packet.Food)
-	if err != nil {
-		log.Print(err)
-		return
+	if player.protocol < V1_8 {
+		err = player.WriteUInt16(uint16(packet.Food))
+		if err != nil {
+			log.Print(err)
+			return
+		}
+	} else {
+		err = player.WriteVarInt(packet.Food)
+		if err != nil {
+			log.Print(err)
+			return
+		}
 	}
+
 	err = player.WriteFloat32(packet.FoodSaturation)
 	if err != nil {
 		log.Print(err)
